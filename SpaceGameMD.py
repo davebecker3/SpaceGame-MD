@@ -62,8 +62,8 @@ class GameLayer(cocos.layer.Layer):
     def __init__(self):
         super(GameLayer, self).__init__()
         self.add_hero()
-        self.add_asteroids()
-        self.add_asteroid()
+        # self.add_asteroids()
+        # self.add_asteroid()
 
         # iterator for "count" method test.
         self.i = 0
@@ -71,11 +71,14 @@ class GameLayer(cocos.layer.Layer):
         #proximity to check distance between hero & test asteroid.
         self.proximity = (0.0, 0.0)
 
+        self.asteroid_count = 0
+        self.asteroid_dict = {}
+
         self.asteroid_list = set()
         self.remove_asteroid_list = set()
-        self.asteroid_list.add(self.asteroid_x)
-        self.asteroid_list.add(self.asteroid1)
-        self.asteroid_list.add(self.asteroid2)
+        # self.asteroid_list.add(self.asteroid_x)
+        # self.asteroid_list.add(self.asteroid1)
+        # self.asteroid_list.add(self.asteroid2)
 
         # self.counter(self.i)
         self.add_count_label()
@@ -113,6 +116,34 @@ class GameLayer(cocos.layer.Layer):
         aster1Velocity = (0, 0)
         self.asteroid_x = Asteroid(aster1Image, aster1Position)
         self.add(self.asteroid_x)
+
+    def generate_asteroids(self):
+        if (len(self.asteroid_list) < 1):
+            asterImage = pyglet.resource.image('asteroid.png')
+            asterPos = (150, 450)
+            asterVel = (0, 0)
+            self.asteroid_dict[self.asteroid_count] = Asteroid(asterImage, asterPos)
+            self.add(self.asteroid_dict[self.asteroid_count])
+            self.asteroid_list.add(self.asteroid_dict[self.asteroid_count])
+            self.asteroid_dict[self.asteroid_count].do(actions.MoveBy((0, -600), 4))
+            self.asteroid_count += 1
+
+    def random_asteroid(self):
+        x_pos = random.randint(0, 630)
+        y_pos = random.randint(0, 480)
+        asterPos = (x_pos, 480)
+        asterImage = pyglet.resource.image('asteroid.png')
+        return Asteroid(asterImage, asterPos)
+
+    def add_asteroid2(self):
+        matty = self.random_asteroid()
+        self.add(matty)
+
+    def move_your_asteroid(self):
+        matty2 = self.random_asteroid()
+        self.add(matty2)
+        matty2.do(actions.MoveBy((0, -555), 5))
+
 
     def boom(self):
         self.msg_boom = cocos.text.Label('BOOM!',
@@ -187,7 +218,9 @@ class GameLayer(cocos.layer.Layer):
 
     def update(self, dt):
         self.i = (self.i + 1)
-
+        # self.add_asteroid2()
+        # self.generate_asteroids()
+        self.move_your_asteroid()
         self.update_count_label(self.i)
         self.update_pos_x_label()
         self.check_proximity()
